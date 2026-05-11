@@ -1,0 +1,76 @@
+# infrastructure/docker/docker-compose.dev.yml
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cca-postgres
+    environment:
+      POSTGRES_DB: cryptochannel_africa
+      POSTGRES_USER: cca_user
+      POSTGRES_PASSWORD: dev_password_change_in_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cca_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: cca-redis
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.dev
+    container_name: cca-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://cca_user:dev_password_change_in_prod@postgres:5432/cryptochannel_africa
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+    env_file:
+      - ../../.env.local
+    ports:
+      - "3001:3001"
+    volumes:
+      - ../../apps/api/src:/app/src
+    command: npm run start:dev
+
+  web:
+    build:
+      context: ../../apps/web
+      dockerfile: Dockerfile.dev
+    container_name: cca-web
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_WS_URL: ws://localhost:3001
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../../apps/web:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+volumes:
+  postgres_data:
+  redis_data:

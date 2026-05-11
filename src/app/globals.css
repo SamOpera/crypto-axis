@@ -1,0 +1,175 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Sora:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    /* ── Typography scale — applied consistently across all components ── */
+    --text-hero:    clamp(20px, 2.8vw, 30px);  /* broadcast headline */
+    --text-title:   clamp(14px, 1.6vw, 18px);  /* section titles      */
+    --text-body:    clamp(11px, 1.1vw, 13px);  /* script, body copy   */
+    --text-label:   9px;                        /* all mono labels     */
+    --text-micro:   8px;                        /* rep badges, meta    */
+
+    /* ── Spacing scale ── */
+    --space-section: clamp(16px, 3vw, 24px);   /* section padding     */
+    --space-card:    12px;                      /* card internal pad   */
+    --space-gap:     10px;                      /* gap between cards   */
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: #07080C;
+    color: #EAECf4;
+    font-family: "Sora", sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    /* Mobile: reserve space for fixed bottom nav */
+    padding-bottom: 0;
+  }
+  @media (max-width: 1023px) {
+    body { padding-bottom: 64px; }
+  }
+  ::-webkit-scrollbar        { width: 3px; }
+  ::-webkit-scrollbar-thumb  { background: #9A6800; border-radius: 2px; }
+  ::-webkit-scrollbar-track  { background: #07080C; }
+
+  /* ── Normalise button defaults ── */
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+  button:focus-visible {
+    outline: 2px solid #F0A500;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  /* Skeleton shimmer */
+  .skeleton {
+    background: linear-gradient(90deg, #181C24 25%, #1E222E 50%, #181C24 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+  }
+  /* Scanlines — applied via class on broadcast zone */
+  .scanlines {
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0, 0, 0, 0.05) 3px,
+      rgba(0, 0, 0, 0.05) 4px
+    );
+  }
+  /* Kente stripe divider */
+  .kente-stripe {
+    background: repeating-linear-gradient(
+      90deg,
+      #F0A500 0,    #F0A500 16px,
+      transparent   16px, transparent 20px,
+      #FF3B5C 20px, #FF3B5C 32px,
+      transparent   32px, transparent 36px,
+      #00E5A0 36px, #00E5A0 48px,
+      transparent   48px, transparent 52px
+    );
+  }
+  /* Waveform bar base */
+  .wave-bar {
+    width: 3px;
+    background: #F0A500;
+    border-radius: 2px;
+    transform-origin: bottom;
+    animation: wave 0.7s ease-in-out infinite;
+  }
+  .wave-bar:nth-child(1)  { height: 6px;  animation-delay: 0.00s; }
+  .wave-bar:nth-child(2)  { height: 12px; animation-delay: 0.07s; }
+  .wave-bar:nth-child(3)  { height: 18px; animation-delay: 0.14s; }
+  .wave-bar:nth-child(4)  { height: 14px; animation-delay: 0.21s; }
+  .wave-bar:nth-child(5)  { height: 20px; animation-delay: 0.10s; }
+  .wave-bar:nth-child(6)  { height: 16px; animation-delay: 0.17s; }
+  .wave-bar:nth-child(7)  { height: 10px; animation-delay: 0.04s; }
+  .wave-bar:nth-child(8)  { height: 18px; animation-delay: 0.24s; }
+  .wave-bar:nth-child(9)  { height: 8px;  animation-delay: 0.11s; }
+  .wave-bar:nth-child(10) { height: 14px; animation-delay: 0.18s; }
+}
+
+/* Reduced motion — respects OS preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Intro sequence ── */
+@keyframes intro-bg-pulse {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes intro-logo-rise {
+  0%   { opacity: 0; transform: translateY(24px) scale(0.96); }
+  20%  { opacity: 1; transform: translateY(0)    scale(1);    }
+  78%  { opacity: 1; transform: translateY(0)    scale(1);    }
+  100% { opacity: 0; transform: translateY(-12px) scale(0.98);}
+}
+
+@keyframes intro-tagline-rise {
+  0%,10%{ opacity: 0; transform: translateY(16px); }
+  28%   { opacity: 1; transform: translateY(0);     }
+  78%   { opacity: 1; transform: translateY(0);     }
+  100%  { opacity: 0; transform: translateY(-8px);  }
+}
+
+@keyframes intro-bar-grow {
+  0%,5% { transform: scaleX(0); opacity: 0; }
+  25%   { transform: scaleX(1); opacity: 1; }
+  78%   { transform: scaleX(1); opacity: 1; }
+  100%  { transform: scaleX(1); opacity: 0; }
+}
+
+@keyframes intro-dot-blink {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0.15; }
+}
+
+@keyframes intro-stat-rise {
+  0%,20%{ opacity: 0; transform: translateY(10px); }
+  40%   { opacity: 1; transform: translateY(0);    }
+  78%   { opacity: 1; }
+  100%  { opacity: 0; }
+}
+
+/* Content entrance after intro completes */
+@keyframes content-entrance {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.content-enter {
+  animation: content-entrance 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Daily briefing panel */
+@keyframes briefing-slide-down {
+  from { opacity: 0; transform: translateY(-8px); max-height: 0; }
+  to   { opacity: 1; transform: translateY(0);    max-height: 200px; }
+}
+
+.briefing-enter {
+  animation: briefing-slide-down 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
